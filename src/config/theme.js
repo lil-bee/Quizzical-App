@@ -15,6 +15,17 @@ export const theme = createTheme({
 			fontSize: "32px",
 			color: "#293264",
 		},
+		question: {
+			fontWeight: 700,
+			fontSize: "16px",
+			color: "#293264",
+		},
+		pilihanJawaban: {
+			fontWeight: 500,
+			fontSize: "11px",
+			color: "#293264",
+			textTransform: "capitalize",
+		},
 	},
 	shape: {
 		borderRadius: "15px",
@@ -42,6 +53,26 @@ export const theme = createTheme({
 			styleOverrides: {
 				root: {
 					textTransform: "capitalize",
+				},
+			},
+		},
+		MuiToggleButton: {
+			styleOverrides: {
+				root: {
+					color: "#4D5B9E",
+					margin: "5px 35px 0 0",
+					padding: "2px 8px",
+					width: "max-content",
+					borderStyle: "none",
+					border: "0.79px solid !important",
+					borderRadius: "13px!important",
+					"&.Mui-selected": {
+						//	backgroundColor: "#D6DBF5",
+						borderStyle: "none",
+					},
+					"&:hover": {
+						backgroundColor: "#D6DBF5",
+					},
 				},
 			},
 		},
