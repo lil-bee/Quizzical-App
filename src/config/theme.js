@@ -49,6 +49,22 @@ export const theme = createTheme({
 						// Tambahkan properti gaya lainnya sesuai kebutuhan Anda
 					},
 				},
+				{
+					props: { variant: "question" },
+					style: {
+						backgroundColor: "#4D5B9E",
+						color: "#F5F7FB",
+						fontSize: "11px",
+						fontWeight: "600",
+						":hover": {
+							backgroundColor: "#313D79",
+						},
+						borderRadius: "8px",
+						width: "120px",
+						height: "35px",
+						// Tambahkan properti gaya lainnya sesuai kebutuhan Anda
+					},
+				},
 			],
 			styleOverrides: {
 				root: {
@@ -67,7 +83,7 @@ export const theme = createTheme({
 					border: "0.79px solid !important",
 					borderRadius: "13px!important",
 					"&.Mui-selected": {
-						//	backgroundColor: "#D6DBF5",
+						backgroundColor: "#D6DBF5",
 						borderStyle: "none",
 					},
 					"&:hover": {

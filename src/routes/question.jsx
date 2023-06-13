@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, IconButton, Typography } from "@mui/material";
 import { ToggleButton } from "@mui/material";
 import { ToggleButtonGroup } from "@mui/material";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import getQuestion from "../api/get-question";
 import { useQuery } from "react-query";
 import { decode } from "html-entities";
 import { useState } from "react";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 function Question() {
 	const navigate = useNavigate();
@@ -14,6 +15,7 @@ function Question() {
 	const [newData, setNewData] = useState([]);
 	const [newCorrectAnswer, setNewCorrectAnswer] = useState([]);
 	const [cekJawaban, setCekJawaban] = useState(false);
+	const [errMessage, setErrMessage] = useState("");
 
 	const handleChange = (questionIndex, selectedAnswer) => {
 		const newAnswers = [...answers];
@@ -30,31 +32,51 @@ function Question() {
 		return newArray;
 	}
 
-	const { data, status } = useQuery("question-list", () => getQuestion(), {
-		onError: () => {
-			console.log("hayuu error");
-		},
-		onSuccess: (data) => {
-			console.log("bisa coo");
+	const { data, status, refetch } = useQuery(
+		"question-list",
+		() => getQuestion(),
+		{
+			onError: () => {
+				console.log("hayuu error");
+			},
+			onSuccess: (data) => {
+				console.log("bisa coo");
 
-			const newArr = data.map(
-				({ question, correct_answer, incorrect_answers }) => ({
-					correct_answer,
-					question,
-					answers: shuffleArray([correct_answer, ...incorrect_answers]),
-				})
-			);
-			const newCorr = data.map(({ correct_answer }) => correct_answer);
-			setNewCorrectAnswer(newCorr);
-			setNewData(newArr);
-			console.log(newArr);
-		},
-		retry: false,
-		refetchOnWindowFocus: false,
-	});
+				const newArr = data.map(
+					({ question, correct_answer, incorrect_answers }) => ({
+						correct_answer,
+						question,
+						answers: shuffleArray([correct_answer, ...incorrect_answers]),
+					})
+				);
+				const newCorr = data.map(({ correct_answer }) => correct_answer);
+				setNewCorrectAnswer(newCorr);
+				setNewData(newArr);
+				console.log(newArr);
+			},
+			retry: false,
+			refetchOnWindowFocus: false,
+		}
+	);
 
 	console.log(answers);
 	console.log(newCorrectAnswer);
+
+	const compareArr = (a, b) => {
+		let corAns = 0;
+		for (let i = 0; i < a.length; i++) {
+			if (a[i] === b[i]) corAns++;
+		}
+		return corAns;
+	};
+	function checkArr(arr) {
+		if (arr.length === 0) return false;
+		if (arr.length !== 5) return false;
+		for (let i = 0; i < arr.length; i++) {
+			if (arr[i] == undefined) return false;
+		}
+		return true;
+	}
 
 	if (status === "loading") {
 		return <Typography>loading...</Typography>;
@@ -62,6 +84,11 @@ function Question() {
 
 	return status === "success" && data.length > 0 ? (
 		<>
+			<IconButton
+				onClick={() => navigate("/")}
+				sx={{ position: "absolute", m: "86px 0 0 40px" }}>
+				<ArrowBackIcon />
+			</IconButton>
 			<Box
 				sx={{
 					height: "100vh",
@@ -119,7 +146,7 @@ function Question() {
 													...(cekJawaban && {
 														"&.Mui-selected": {
 															//	backgroundColor: "#D6DBF5",
-															borderStyle: "none",
+															border: "none",
 															backgroundColor:
 																answers[index] === newCorrectAnswer[index]
 																	? "#94D7A2"
@@ -130,7 +157,12 @@ function Question() {
 																	: 1,
 														},
 														"&:not(.Mui-selected)": {
-															opacity: 0.5,
+															opacity:
+																answer == newCorrectAnswer[index] ? 1 : 0.5,
+															backgroundColor:
+																answer == newCorrectAnswer[index]
+																	? "#94D7A2"
+																	: null,
 														},
 													}),
 												}}
@@ -145,17 +177,51 @@ function Question() {
 							</div>
 						</>
 					))}
-					<Button onClick={() => navigate("/")} variant="start">
-						Back
-					</Button>
-					<Button
-						onClick={() => {
-							setCekJawaban(true);
-							console.log(getQuestion());
-						}}
-						variant="start">
-						test
-					</Button>
+					{!cekJawaban && (
+						<Button
+							onClick={() => {
+								if (!checkArr(answers)) {
+									setErrMessage("pilih semua dulu woi");
+								} else {
+									setErrMessage("");
+									setCekJawaban(true);
+								}
+							}}
+							variant="question">
+							test
+						</Button>
+					)}
+
+					{errMessage && (
+						<Typography variant="pilihanJawaban">{errMessage}</Typography>
+					)}
+
+					{cekJawaban && (
+						<>
+							<div
+								style={{
+									display: "flex",
+									justifyContent: "center",
+									alignItems: "center",
+									gap: "15px",
+								}}>
+								<Typography variant="question">
+									You scored {compareArr(answers, newCorrectAnswer)}/5 correct
+									answers
+								</Typography>
+								<Button
+									onClick={() => {
+										setCekJawaban(false);
+										setErrMessage("");
+										setAnswers([]);
+										refetch();
+									}}
+									variant="question">
+									lagi
+								</Button>
+							</div>
+						</>
+					)}
 				</Box>
 			</Box>
 		</>
