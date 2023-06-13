@@ -7,6 +7,8 @@ import { useQuery } from "react-query";
 import { decode } from "html-entities";
 import { useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import blobBawah from "../assets/blob_bawah.svg";
+import blobAtas from "../assets/blob_atas.svg";
 
 function Question() {
 	const navigate = useNavigate();
@@ -79,121 +81,155 @@ function Question() {
 	}
 
 	if (status === "loading") {
-		return <Typography>loading...</Typography>;
+		return <Typography alignSelf="center">loading...</Typography>;
 	}
 
 	return status === "success" && data.length > 0 ? (
 		<>
 			<IconButton
 				onClick={() => navigate("/")}
-				sx={{ position: "absolute", m: "86px 0 0 40px" }}>
+				sx={{ position: "absolute", m: "70px 0 0 40px" }}>
 				<ArrowBackIcon />
 			</IconButton>
 			<Box
 				sx={{
 					height: "100vh",
 					display: "flex",
-					justifyContent: "center",
+					justifyContent: "space-between",
 					alignItems: "center",
 				}}>
+				<img
+					style={{
+						marginTop: "auto",
+					}}
+					src={blobBawah}
+					alt=""
+				/>
 				<Box
 					sx={{
+						height: "100vh",
 						display: "flex",
+						gap: "20px",
 						flexDirection: "column",
+						justifyContent: "center",
 						alignItems: "center",
-						gap: "30px",
 					}}>
 					<Typography variant="title">Quizzical Question</Typography>
-
-					{newData.map((item, index) => (
-						<>
-							<div
-								style={{
-									display: "flex",
-									flexDirection: "column",
-									justifyContent: "center",
-									alignItems: "center",
-								}}
-								key={index}>
-								<Typography variant="question">
-									{decode(item.question)}
-								</Typography>
-								<div style={{ display: "flex", flexDirection: "row" }}>
-									{item.answers.map((answer, idx) => (
-										<ToggleButtonGroup
-											value={answers[index]}
-											exclusive
-											onChange={(event, selectedAnswer) => {
-												handleChange(index, selectedAnswer);
-											}}
-											sx={{
-												display: "flex",
-												flexDirection: "row",
-											}}
-											aria-label="text alignment">
-											<ToggleButton
-												key={index}
-												value={answer}
-												onClick={() => {
-													console.log(index);
-													console.log(answers[index]);
-													console.log(newCorrectAnswer[index]);
-													console.log(answer[index]);
-													console.log(answer);
-													console.log(cekJawaban);
-												}}
-												sx={{
-													...(cekJawaban && {
-														"&.Mui-selected": {
-															//	backgroundColor: "#D6DBF5",
-															border: "none",
-															backgroundColor:
-																answers[index] === newCorrectAnswer[index]
-																	? "#94D7A2"
-																	: "#F8BCBC",
-															opacity:
-																answers[index] !== newCorrectAnswer[index]
-																	? 0.5
-																	: 1,
-														},
-														"&:not(.Mui-selected)": {
-															opacity:
-																answer == newCorrectAnswer[index] ? 1 : 0.5,
-															backgroundColor:
-																answer == newCorrectAnswer[index]
-																	? "#94D7A2"
-																	: null,
-														},
-													}),
-												}}
-												aria-label="left aligned">
-												<Typography variant="pilihanJawaban">
-													{decode(answer)}
-												</Typography>
-											</ToggleButton>
-										</ToggleButtonGroup>
-									))}
+					<Box
+						sx={{
+							display: "flex",
+							flexDirection: "column",
+							alignItems: "start",
+							gap: "30px",
+							mb: "20px",
+						}}>
+						{newData.map((item, index) => (
+							<>
+								<div
+									style={{
+										display: "flex",
+										flexDirection: "column",
+										justifyContent: "start",
+										alignItems: "start",
+									}}
+									key={index}>
+									<Typography sx={{ mb: "2px" }} variant="question">
+										{decode(item.question)}
+									</Typography>
+									<div style={{ display: "flex", flexDirection: "row" }}>
+										{item.answers.map((answer, idx) => (
+											<>
+												<ToggleButtonGroup
+													value={answers[index]}
+													exclusive
+													onChange={(event, selectedAnswer) => {
+														handleChange(index, selectedAnswer);
+													}}
+													sx={{
+														display: "flex",
+														flexDirection: "row",
+													}}
+													aria-label="text alignment">
+													<ToggleButton
+														key={index}
+														value={answer}
+														onClick={() => {
+															console.log(index);
+															console.log(answers[index]);
+															console.log(newCorrectAnswer[index]);
+															console.log(answer[index]);
+															console.log(answer);
+															console.log(cekJawaban);
+														}}
+														sx={{
+															...(cekJawaban && {
+																"&.Mui-selected": {
+																	//	backgroundColor: "#D6DBF5",
+																	border: "none",
+																	backgroundColor:
+																		answers[index] === newCorrectAnswer[index]
+																			? "#94D7A2"
+																			: "#F8BCBC",
+																	opacity:
+																		answers[index] !== newCorrectAnswer[index]
+																			? 0.5
+																			: 1,
+																},
+																"&:not(.Mui-selected)": {
+																	opacity:
+																		answer == newCorrectAnswer[index] ? 1 : 0.5,
+																	backgroundColor:
+																		answer == newCorrectAnswer[index]
+																			? "#94D7A2"
+																			: null,
+																},
+															}),
+														}}
+														aria-label="left aligned">
+														<Typography variant="pilihanJawaban">
+															{decode(answer)}
+														</Typography>
+													</ToggleButton>
+												</ToggleButtonGroup>
+											</>
+										))}
+									</div>
 								</div>
-							</div>
-						</>
-					))}
+								<hr
+									style={{
+										width: "100%",
+										border: "0.79px solid #DBDEF0",
+										marginTop: "-10px",
+										marginBottom: "-15px",
+									}}
+								/>
+							</>
+						))}
+					</Box>
 					{!cekJawaban && (
-						<Button
-							onClick={() => {
-								if (!checkArr(answers)) {
-									setErrMessage("pilih semua dulu woi");
-								} else {
-									setErrMessage("");
-									setCekJawaban(true);
-								}
-							}}
-							variant="question">
-							test
-						</Button>
-					)}
-
-					{errMessage && (
-						<Typography variant="pilihanJawaban">{errMessage}</Typography>
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "center",
+								alignItems: "center",
+								gap: "15px",
+							}}>
+							{errMessage && (
+								<Typography variant="pilihanJawaban">{errMessage}</Typography>
+							)}
+							<Button
+								onClick={() => {
+									if (!checkArr(answers)) {
+										setErrMessage("please select all answer choices");
+									} else {
+										setErrMessage("");
+										setCekJawaban(true);
+									}
+								}}
+								variant="question">
+								Check Answers
+							</Button>
+						</div>
 					)}
 
 					{cekJawaban && (
@@ -217,16 +253,23 @@ function Question() {
 										refetch();
 									}}
 									variant="question">
-									lagi
+									Play Again
 								</Button>
 							</div>
 						</>
 					)}
 				</Box>
+				<img
+					style={{
+						marginBottom: "auto",
+					}}
+					src={blobAtas}
+					alt=""
+				/>
 			</Box>
 		</>
 	) : (
-		<Typography>error paling bawah</Typography>
+		<Typography>error </Typography>
 	);
 }
 export default Question;
